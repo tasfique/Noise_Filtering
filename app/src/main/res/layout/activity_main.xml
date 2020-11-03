@@ -11,14 +11,19 @@
     android:gravity="center">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/audio_name"
-        android:hint="Click the Icon to Select"
-        android:textSize="20dp"
-        android:textStyle="bold"
+        android:id="@+id/textViewInfo"
+        android:layout_width="306dp"
+        android:layout_height="120dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/audio_file_info"
         android:textAlignment="center"
-        android:textColor="@android:color/white"/>
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/audio_picture"
@@ -33,19 +38,25 @@
         android:layout_marginTop="15dp">
 
         <ImageView
-            android:id="@+id/bt_noise"
+            android:id="@+id/buttonOriginal"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginStart="40dp"
+            android:layout_marginStart="0dp"
             android:src="@drawable/ic_baseline_music_note_24" />
 
         <ImageView
             android:id="@+id/bt_denoise"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginStart="40dp"
+            android:layout_marginStart="50dp"
             android:src="@drawable/ic_baseline_music_off_24" />
 
+        <ImageView
+            android:id="@+id/bt_stop"
+            android:layout_width="51dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="50dp"
+            android:src="@drawable/ic_baseline_stop_24" />
 
     </LinearLayout>
 
@@ -59,7 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/NoiseText"
-            android:layout_marginStart="40dp"
+
             android:hint="Noise"
             android:textSize="20dp"
             android:textStyle="bold"
@@ -69,8 +80,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/DeNoiseText"
-            android:layout_marginStart="40dp"
+            android:layout_marginStart="50dp"
             android:hint="DeNoise"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/StopText"
+            android:layout_marginStart="50dp"
+            android:hint="Stop"
             android:textSize="20dp"
             android:textStyle="bold"
             android:textAlignment="center"

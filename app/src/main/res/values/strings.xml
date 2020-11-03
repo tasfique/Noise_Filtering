@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Noise Filtering</string>
+    <string name="audio_file_info">Audio file info</string>
 </resources>
