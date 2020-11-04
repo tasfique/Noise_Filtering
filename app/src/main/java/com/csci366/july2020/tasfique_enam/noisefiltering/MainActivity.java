@@ -20,7 +20,7 @@ import java.nio.ShortBuffer;
 import static android.content.ContentValues.TAG;
 
 public class MainActivity extends AppCompatActivity {
-    ImageView btNoise, btDeNoise, audioPicture;
+    ImageView btNoise, btDeNoise, btStop, audioPicture;
 
     MediaPlayer mediaPlayer;
     Runnable runnable;
@@ -41,21 +41,61 @@ public class MainActivity extends AppCompatActivity {
         //Assigning Values
         btNoise = findViewById(R.id.buttonOriginal);
         btDeNoise = findViewById(R.id.bt_denoise);
+        btStop = findViewById(R.id.bt_stop);
         audioPicture = findViewById(R.id.audio_picture);
         mTextView = findViewById(R.id.textViewInfo);
         audioSamples = readWavData();
 
+        btNoise.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                continuePlaying = true;
+
+                // Allocate ShortBuffer
+                mSamples = ShortBuffer.allocate(mNumSamples);
+                // put audio samples to ShortBuffer
+                mSamples.put(audioSamples);
+                playAudio();
+
+            }
+        });
+
+        btDeNoise.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                continuePlaying = true;
+                short[] filteredSamples = new short[mNumSamples];
+                for(int i = 14; i < filteredSamples.length; i++) {
+                    filteredSamples[i] = (short)((audioSamples[i] + audioSamples[i-1] + audioSamples[i-2] + audioSamples[i-3] + audioSamples[i-4] + audioSamples[i-5] + audioSamples[i-6] + audioSamples[i-7] + audioSamples[i-8] + audioSamples[i-9] +
+                            audioSamples[i-10] + audioSamples[i-11] + audioSamples[i-12] + audioSamples[i-13] + audioSamples[i-14]) / 15);
+                }
+
+                // Allocate ShortBuffer
+                mSamples = ShortBuffer.allocate(mNumSamples);
+                // put audio samples to ShortBuffer
+                mSamples.put(filteredSamples);
+                playAudio();
+            }
+        });
+
+        btStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                continuePlaying = false;
+            }
+        });
+
     }
 
-    public void startPlaying(View view) {
-        continuePlaying = true;
-
-        // Allocate ShortBuffer
-        mSamples = ShortBuffer.allocate(mNumSamples);
-        // put audio samples to ShortBuffer
-        mSamples.put(audioSamples);
-        playAudio();
-    }
+//    public void startPlaying(View view) {
+//        continuePlaying = true;
+//
+//        // Allocate ShortBuffer
+//        mSamples = ShortBuffer.allocate(mNumSamples);
+//        // put audio samples to ShortBuffer
+//        mSamples.put(audioSamples);
+//        playAudio();
+//    }
 
     public class WavInfo {
         AudioSpec spec;
