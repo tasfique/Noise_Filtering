@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context="com.csci366.july2020.tasfique_enam.noisefiltering.MainActivity"
     android:orientation="vertical"
-    android:background="@android:color/holo_red_light"
+    android:background="@android:color/holo_blue_bright"
     android:gravity="center">
 
     <TextView
@@ -19,7 +19,7 @@
         android:layout_marginTop="10dp"
         android:text="@string/audio_file_info"
         android:textAlignment="center"
-        android:textSize="18sp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
