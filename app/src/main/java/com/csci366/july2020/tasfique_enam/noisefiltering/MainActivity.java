@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.media.AudioFormat;
@@ -63,17 +64,45 @@ public class MainActivity extends AppCompatActivity {
         btDeNoise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                continuePlaying = true;
+//                short[] filteredSamples = new short[mNumSamples];
+//                Filter filter = new Filter(44100,33100, Filter.PassType.Lowpass,1); //43100
+//                for(int i = 23; i < filteredSamples.length; i++) {
+//                    filteredSamples[i] = (short)((audioSamples[i] + audioSamples[i-1] +
+//                            audioSamples[i-2] + audioSamples[i-3] + audioSamples[i-4] +
+//                            audioSamples[i-5] + audioSamples[i-6] + audioSamples[i-7] +
+//                            audioSamples[i-8] + audioSamples[i-9] +
+//                            audioSamples[i-10] + audioSamples[i-11] +
+//                            audioSamples[i-12] + audioSamples[i-13] +
+//                            audioSamples[i-14] + audioSamples[i-15] +
+//                            audioSamples[i-16] + audioSamples[i-17] +
+//                            audioSamples[i-18] + audioSamples[i-19] +
+//                            audioSamples[i-20] + audioSamples[i-21] +
+//                            audioSamples[i-22] + audioSamples[i-23] ) / 24);
+//                    filteredSamples[i] = (short)filter.getValue();
+//                }
+//
+//                // Allocate ShortBuffer
+//                mSamples = ShortBuffer.allocate(mNumSamples);
+//                // put audio samples to ShortBuffer
+//                mSamples.put(filteredSamples);
+//                playAudio();
+                // from here
                 continuePlaying = true;
-                short[] filteredSamples = new short[mNumSamples];
-                for(int i = 14; i < filteredSamples.length; i++) {
-                    filteredSamples[i] = (short)((audioSamples[i] + audioSamples[i-1] + audioSamples[i-2] + audioSamples[i-3] + audioSamples[i-4] + audioSamples[i-5] + audioSamples[i-6] + audioSamples[i-7] + audioSamples[i-8] + audioSamples[i-9] +
-                            audioSamples[i-10] + audioSamples[i-11] + audioSamples[i-12] + audioSamples[i-13] + audioSamples[i-14]) / 15);
+                short[] DeNoisedAudioSamples = new short[mNumSamples];
+
+                Filter filter = new Filter(44100,43100, 1); //43100
+                for (int i=0; i<mNumSamples; i++) {
+                    //DeNoisedAudioSamples[i] = audioSamples[mNumSamples-i-1];;
+                    DeNoisedAudioSamples[i] = audioSamples[i];
+                    filter.Update(DeNoisedAudioSamples[i]);
+                    DeNoisedAudioSamples[i] = (short)filter.getValue();
                 }
 
-                // Allocate ShortBuffer
+
                 mSamples = ShortBuffer.allocate(mNumSamples);
-                // put audio samples to ShortBuffer
-                mSamples.put(filteredSamples);
+                // put data to ShortBuffer
+                mSamples.put(DeNoisedAudioSamples);
                 playAudio();
             }
         });
@@ -96,6 +125,70 @@ public class MainActivity extends AppCompatActivity {
 //        mSamples.put(audioSamples);
 //        playAudio();
 //    }
+
+    public static class Filter {
+
+
+        /// <summary>
+/// rez amount, from sqrt(2) to ~ 0.1
+/// </summary>
+        private float resonance;
+
+        private float frequency;
+        private int sampleRate;
+//        private PassType passType;
+
+
+        public float value;
+
+        private float c, a1, a2, a3, b1, b2;
+
+        /// <summary>
+/// Array of input values, latest are in front
+/// </summary>
+        private float[] inputHistory = new float[2];
+
+        /// <summary>
+/// Array of output values, latest are in front
+/// </summary>
+        private float[] outputHistory = new float[3];
+
+        public Filter(float frequency, int sampleRate, float resonance)
+        {
+            this.resonance = resonance;
+            this.frequency = frequency;
+            this.sampleRate = sampleRate;
+
+                    c = 1.0f / (float)Math.tan(Math.PI * frequency / sampleRate);
+                    a1 = 1.0f / (1.0f + resonance * c + c * c);
+                    a2 = 2f * a1;
+                    a3 = a1;
+                    b1 = 2.0f * (1.0f - c * c) * a1;
+                    b2 = (1.0f - resonance * c + c * c) * a1;
+
+        }
+
+
+        public void Update(float newInput)
+        {
+            float newOutput = a1 * newInput + a2 * this.inputHistory[0] + a3 * this.inputHistory[1] - b1 * this.outputHistory[0] - b2 * this.outputHistory[1];
+
+            this.inputHistory[1] = this.inputHistory[0];
+            this.inputHistory[0] = newInput;
+
+            this.outputHistory[2] = this.outputHistory[1];
+            this.outputHistory[1] = this.outputHistory[0];
+            this.outputHistory[0] = newOutput;
+        }
+
+
+        public float getValue()
+        {
+            return this.outputHistory[0];
+        }
+
+
+    }
 
     public class WavInfo {
         AudioSpec spec;
